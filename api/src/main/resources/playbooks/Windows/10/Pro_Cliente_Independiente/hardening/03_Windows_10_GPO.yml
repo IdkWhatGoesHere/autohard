@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: yes
+  tasks:
+    - name: Execute script to configure GPOs
+      ansible.builtin.win_shell: |
+        %systemroot%\system32\xcopy /E /H /R /I /Y "c:\Scripts\CCN-STIC-599B19 ENS categoria basica\grouppolicy" c:\windows\system32\grouppolicy
+  

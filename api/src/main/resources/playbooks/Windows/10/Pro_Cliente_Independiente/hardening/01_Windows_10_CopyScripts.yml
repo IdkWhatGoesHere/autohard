@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: yes
+  tasks:
+    - name: Copy scripts to remote Windows machine
+      ansible.builtin.win_copy:
+        src: ../resources/Scripts
+        dest: C:\
