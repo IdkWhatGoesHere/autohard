@@ -94,6 +94,18 @@ public class DatabaseService {
         return roleRepository.findById(id).orElse(null);
     }
 
+    public List<Role> getRoles(){
+        return roleRepository.findAll();
+    }
+
+    public Role getRoleByName(String name){
+        return roleRepository.findByName(name);
+    }
+
+    public void deleteRoleById(Integer id){
+        roleRepository.deleteById(id);
+    }
+
     /*
      * AUTH_TOKEN OPERATIONS
      */

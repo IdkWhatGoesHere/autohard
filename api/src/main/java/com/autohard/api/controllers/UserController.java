@@ -147,6 +147,6 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(rescuedUser.update(passwordEncoder, user), HttpStatus.OK);
+        return new ResponseEntity<>(databaseService.saveUser(rescuedUser.update(passwordEncoder, user)), HttpStatus.OK);
     }
 }

@@ -66,9 +66,9 @@ public class User{
         this.username = newUser.getUsername();
 
         if (newUser.getPassword() != null){
-            if(!passwordEncoder.matches(newUser.getPassword(), password)){
+            if (!passwordEncoder.matches(newUser.getPassword(), password)){
                 this.password = passwordEncoder.encode(newUser.getPassword());
-                this.lastPasswordUpdate = new Date(System.currentTimeMillis());
+            this.lastPasswordUpdate = new Date(System.currentTimeMillis());
             }
         }
 

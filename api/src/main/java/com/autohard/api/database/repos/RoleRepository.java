@@ -7,5 +7,5 @@ import com.autohard.api.models.session.Role;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Integer>{
-    
+    public Role findByName(String name);
 }

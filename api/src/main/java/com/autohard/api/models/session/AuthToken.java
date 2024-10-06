@@ -13,7 +13,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "AuthToken")
+@Table(name = "auth_token")
 public class AuthToken {
     
     @Id
