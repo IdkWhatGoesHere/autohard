@@ -29,6 +29,9 @@ public class Initializer implements ApplicationRunner{
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        /*
+         * INTIIALIZE DATABASE
+         */
         Role adminRole = databaseService.saveRole(new Role(ADMIN_USER, List.of(autoHardPrivilege.values())));
         databaseService.saveUser(new User(ADMIN_USER, passwordEncoder.encode(ADMIN_USER), adminRole));
     }

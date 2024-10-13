@@ -39,7 +39,18 @@ public class AuthToken {
             return null;
         }
 
-        if (rescuedToken.getUser().isCredentialExpired()){
+        if (rescuedToken.getUser().getLocked()){
+            return null;
+        }
+
+        return rescuedToken.getUser();
+    }
+
+    public static User isValidAndModifiable(DatabaseService databaseService, String rawToken){
+        String parsedToken = rawToken.substring(7);
+        AuthToken rescuedToken = databaseService.getAuthTokenByValue(parsedToken);
+        
+        if (rescuedToken == null){
             return null;
         }
 

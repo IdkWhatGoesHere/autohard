@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 
 import com.autohard.api.database.repos.AuthTokenRepository;
 import com.autohard.api.database.repos.JobRepository;
+import com.autohard.api.database.repos.OperatingSystemRepository;
 import com.autohard.api.database.repos.RoleRepository;
 import com.autohard.api.database.repos.UserRepository;
 import com.autohard.api.models.Job;
+import com.autohard.api.models.OperatingSystem;
 import com.autohard.api.models.session.AuthToken;
 import com.autohard.api.models.session.Role;
 import com.autohard.api.models.session.User;
@@ -22,14 +24,16 @@ public class DatabaseService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private AuthTokenRepository authTokenRepository;
+    private OperatingSystemRepository operatingSystemRepository;
 
     @Autowired
     public DatabaseService(JobRepository jobRepository, UserRepository userRepository, RoleRepository roleRepository,
-            AuthTokenRepository authTokenRepository) {
+            AuthTokenRepository authTokenRepository, OperatingSystemRepository operatingSystemRepository) {
         this.jobRepository = jobRepository;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.authTokenRepository = authTokenRepository;
+        this.operatingSystemRepository = operatingSystemRepository;
     }
 
     /*
@@ -106,6 +110,10 @@ public class DatabaseService {
         roleRepository.deleteById(id);
     }
 
+    public List<Role> getAllRoles(){
+        return this.roleRepository.findAll();
+    }
+
     /*
      * AUTH_TOKEN OPERATIONS
      */
@@ -124,6 +132,18 @@ public class DatabaseService {
 
     public void deleteAuthTokenByValue(String tokenValue){
         authTokenRepository.deleteByTokenValue(tokenValue);
+    }
+
+    /*
+     * OPERATING_SYSTEM OPERATIONS
+     */
+
+    public List<OperatingSystem> getAllOperatingSystems(){
+        return this.operatingSystemRepository.findAll();
+    }
+
+    public OperatingSystem getOperatingSystemById(Integer id){
+        return this.operatingSystemRepository.findById(id).orElse(null);
     }
 }
 

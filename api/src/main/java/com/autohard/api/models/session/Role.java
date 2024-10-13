@@ -20,7 +20,13 @@ public class Role {
         WRITE_USER,
         READ_USER,
         WRITE_ROLE,
-        READ_ROLE
+        READ_ROLE,
+        WRITE_OPERATING_SYSTEM,
+        READ_OPERATING_SYSTEM,
+        WRITE_PLAYBOOK,
+        READ_PLAYBOOK,
+        WRITE_NODE,
+        READ_NODE
     }
     
     @Id

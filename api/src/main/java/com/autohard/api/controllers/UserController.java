@@ -131,7 +131,7 @@ public class UserController {
 
     @PutMapping("/user")
     public ResponseEntity<User> modifyUser(@RequestHeader("Authorization") String authHeader, @RequestBody User user){
-        User currentUser = AuthToken.isValid(databaseService, authHeader);
+        User currentUser = AuthToken.isValidAndModifiable(databaseService, authHeader);
 
         if (currentUser == null || !currentUser.hasPrivilege(autoHardPrivilege.WRITE_USER)){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

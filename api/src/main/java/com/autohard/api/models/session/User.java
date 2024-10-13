@@ -117,7 +117,7 @@ public class User{
         this.lastPasswordUpdate = updateDate;
     }
 
-    public boolean isLocked() {
+    public boolean getLocked() {
         return locked;
     }
 
