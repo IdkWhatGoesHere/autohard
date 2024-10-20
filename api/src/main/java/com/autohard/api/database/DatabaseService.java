@@ -10,11 +10,13 @@ import com.autohard.api.database.repos.AuthTokenRepository;
 import com.autohard.api.database.repos.JobRepository;
 import com.autohard.api.database.repos.NodeRepository;
 import com.autohard.api.database.repos.OperatingSystemRepository;
+import com.autohard.api.database.repos.PlaybookRepository;
 import com.autohard.api.database.repos.RoleRepository;
 import com.autohard.api.database.repos.UserRepository;
 import com.autohard.api.models.Job;
 import com.autohard.api.models.Node;
 import com.autohard.api.models.OperatingSystem;
+import com.autohard.api.models.Playbook;
 import com.autohard.api.models.session.AuthToken;
 import com.autohard.api.models.session.Role;
 import com.autohard.api.models.session.User;
@@ -28,17 +30,19 @@ public class DatabaseService {
     private AuthTokenRepository authTokenRepository;
     private OperatingSystemRepository operatingSystemRepository;
     private NodeRepository nodeRepository;
+    private PlaybookRepository playbookRepository;
 
     @Autowired
     public DatabaseService(JobRepository jobRepository, UserRepository userRepository, RoleRepository roleRepository,
             AuthTokenRepository authTokenRepository, OperatingSystemRepository operatingSystemRepository,
-            NodeRepository nodeRepository) {
+            NodeRepository nodeRepository, PlaybookRepository playbookRepository) {
         this.jobRepository = jobRepository;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.authTokenRepository = authTokenRepository;
         this.operatingSystemRepository = operatingSystemRepository;
         this.nodeRepository = nodeRepository;
+        this.playbookRepository = playbookRepository;
     }
 
     /*
@@ -169,6 +173,18 @@ public class DatabaseService {
 
     public void deleteNodeById(Integer id){
         this.nodeRepository.deleteById(id);
+    }
+
+    /*
+     * PLAYBOOK OPERATIONS
+     */
+
+    public List<Playbook> getAllPlaybooks(){
+        return this.playbookRepository.findAll();
+    }
+
+    public Playbook getPlaybookById(Integer id){
+        return this.playbookRepository.findById(id).orElse(null);
     }
 }
 
