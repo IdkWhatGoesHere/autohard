@@ -1,5 +1,8 @@
 package com.autohard.api.models;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,12 +42,23 @@ public class Node {
         this.operatingSystem = operatingSystem;
     }
 
+    public static boolean isIpValid(String ip){
+        Pattern pattern = Pattern.compile("((25[0-5]|2[0-4]\\d|[01]?\\d{1,2})(\\.|$)){4}");
+        Matcher matcher = pattern.matcher(ip);
+
+        return matcher.matches();
+    }
+
     /*
      * GETTERS AND SETTERS
      */
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id){
+        this.id = id;
     }
 
     public String getHostname() {

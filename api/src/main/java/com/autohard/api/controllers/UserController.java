@@ -124,6 +124,10 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        if (rescuedUser.getUsername().equals("admin")){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
         databaseService.deleteUser(rescuedUser);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -145,6 +149,10 @@ public class UserController {
 
         if (rescuedUser == null || databaseService.getRoleById(user.getRole().getId()) == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (rescuedUser.getUsername().equals("admin")){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
         return new ResponseEntity<>(databaseService.saveUser(rescuedUser.update(passwordEncoder, user)), HttpStatus.OK);
