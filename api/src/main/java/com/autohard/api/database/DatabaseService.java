@@ -58,12 +58,11 @@ public class DatabaseService {
     }
 
     public Job getJobById(Integer id){
-        Optional<Job> rescuedJob = this.jobRepository.findById(id);
-        if (rescuedJob.isPresent()){
-            return rescuedJob.get();
-        }else{
-            return null;
-        }
+        return this.jobRepository.findById(id).orElse(null);
+    }
+
+    public void deleteJobById(Integer id){
+        this.jobRepository.deleteById(id);
     }
 
     /*

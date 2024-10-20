@@ -116,9 +116,7 @@ public class NodeController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        Node rescuedNode = databaseService.getNodeById(idNode);
-
-        if (rescuedNode == null){
+        if (databaseService.getNodeById(idNode) == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
