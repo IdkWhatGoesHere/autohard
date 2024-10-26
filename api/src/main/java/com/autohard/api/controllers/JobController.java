@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.autohard.api.database.DatabaseService;
 import com.autohard.api.models.Execution;
 import com.autohard.api.models.Job;
+import com.autohard.api.models.Playbook;
 import com.autohard.api.models.session.AuthToken;
 import com.autohard.api.models.session.Role.autoHardPrivilege;
 import com.autohard.api.models.session.User;
@@ -70,7 +71,19 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        if (job.getName() == null || job.getPlaybook() == null || job.getPlaybook().getId() == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Playbook rescuedPb = databaseService.getPlaybookById(job.getPlaybook().getId());
+
+        if ( rescuedPb == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Job createdJob = new Job(job.getName(), rescuedPb, currentUser);
+
+        return new ResponseEntity<>(createdJob, HttpStatus.OK);
     }
 
     @PutMapping("/job")
@@ -81,7 +94,21 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        if (job.getId() == null || job.getName() == null || job.getPlaybook() == null || job.getPlaybook().getId() == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Playbook rescuedPb = databaseService.getPlaybookById(job.getPlaybook().getId());
+
+        if ( rescuedPb == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Job rescuedJob = databaseService.getJobById(job.getId());
+        rescuedJob.setName(job.getName());
+        rescuedJob.setPlaybook(rescuedPb);
+
+        return new ResponseEntity<>(databaseService.saveJob(rescuedJob), HttpStatus.OK);
     }
 
     @DeleteMapping("/job/{idJob}")
@@ -111,4 +138,57 @@ public class JobController {
 
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
+
+    @GetMapping("/job/{idJob}/grant/{idUser}")
+    public ResponseEntity<Job> grantPermissionsOnJob(@RequestHeader("Authorization") String authHeader, @PathVariable Integer idJob, @PathVariable Integer idUser){
+        User currentUser = AuthToken.isValid(databaseService, authHeader);
+
+        if (currentUser == null || !currentUser.hasPrivilege(autoHardPrivilege.WRITE_JOB)){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        Job rescuedJob = databaseService.getJobById(idJob);
+        User rescuedUser = databaseService.getUserById(idUser);
+
+        if (rescuedJob == null || rescuedUser == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (rescuedJob.getAllowed().get(0).getUsername().equals(currentUser.getUsername())){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        rescuedJob.allowUser(rescuedUser);
+        
+        return new ResponseEntity<>(databaseService.saveJob(rescuedJob), HttpStatus.OK);
+    }
+
+    @GetMapping("/job/{idJob}/revoke/{idUser}")
+    public ResponseEntity<Job> revokePermissionsOnJob(@RequestHeader("Authorization") String authHeader, @PathVariable Integer idJob, @PathVariable Integer idUser){
+        User currentUser = AuthToken.isValid(databaseService, authHeader);
+
+        if (currentUser == null || !currentUser.hasPrivilege(autoHardPrivilege.WRITE_JOB)){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        Job rescuedJob = databaseService.getJobById(idJob);
+        User rescuedUser = databaseService.getUserById(idUser);
+
+        if (rescuedJob == null || rescuedUser == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (rescuedJob.getAllowed().get(0).getUsername().equals(currentUser.getUsername())){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        if (!rescuedJob.getAllowed().contains(rescuedUser)){
+            return new ResponseEntity<>(HttpStatus.OK); 
+        }
+
+        rescuedJob.revokeUser(rescuedUser);
+        
+        return new ResponseEntity<>(databaseService.saveJob(rescuedJob), HttpStatus.OK);
+    }
+
 }

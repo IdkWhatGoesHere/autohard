@@ -145,6 +145,10 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        if (databaseService.getUserByName(user.getUsername()) != null){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
         User rescuedUser = databaseService.getUserById(user.getId());
 
         if (rescuedUser == null || databaseService.getRoleById(user.getRole().getId()) == null){

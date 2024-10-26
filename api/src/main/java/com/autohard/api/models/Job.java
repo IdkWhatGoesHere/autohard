@@ -1,5 +1,6 @@
 package com.autohard.api.models;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.autohard.api.models.session.User;
@@ -39,12 +40,15 @@ public class Job {
         super();
     }
 
-    public Job(String name, Playbook playbook,List<Node> nodes, List<User> allowed) {
+    public Job(String name, Playbook playbook, User owner) {
         this.name = name;
         this.playbook = playbook;
-        this.nodes = nodes;
-        this.allowed = allowed;
+        this.nodes = Collections.emptyList();
+        this.allowed = Collections.emptyList();
+        this.allowed.add(owner);
     }
+
+
 
     /*
      * METHODS
