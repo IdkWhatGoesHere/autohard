@@ -1,7 +1,11 @@
 package com.autohard.api.controllers;
 
+import java.util.Date;
 import java.util.List;
+import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +22,7 @@ import com.autohard.api.database.DatabaseService;
 import com.autohard.api.models.Execution;
 import com.autohard.api.models.Job;
 import com.autohard.api.models.Playbook;
+import com.autohard.api.models.Execution.execState;
 import com.autohard.api.models.session.AuthToken;
 import com.autohard.api.models.session.Role.autoHardPrivilege;
 import com.autohard.api.models.session.User;
@@ -29,6 +34,8 @@ import jakarta.transaction.Transactional;
 public class JobController {
 
     private final DatabaseService databaseService;
+
+    private static final Logger logger = LoggerFactory.getLogger(JobController.class);
 
     @Autowired
     public JobController(DatabaseService databaseService){
@@ -136,7 +143,37 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        Job rescuedJob = databaseService.getJobById(idJob);
+
+        if (rescuedJob == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        String playbookPath = Playbook.PLAYBOOK_BASE_PATH + rescuedJob.getPlaybook().getName();
+        String inventoryPath = "/tmp/autoHardInventory" + System.currentTimeMillis();
+        String outputPath = "/tmp/autoHardOutput" + System.currentTimeMillis();
+
+        try{
+            rescuedJob.buildInventory(inventoryPath);
+        }catch (IOException e){
+            logger.error("An error ocurred when creating the inventory file for the execution");
+            logger.error(e.getMessage());
+
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        try{
+            Runtime.getRuntime().exec("/bin/sh ansible-playbook " + playbookPath + " -i " + inventoryPath + " >> " + outputPath);
+        } catch (IOException e){
+            logger.error("An error ocurred when executing the ansible playbook in the system\'s shell");
+            logger.error(e.getMessage());
+
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }        
+
+        Execution exec = new Execution(new Date(System.currentTimeMillis()), rescuedJob, execState.RUNNING, outputPath);
+
+        return new ResponseEntity<>(databaseService.saveExecution(exec), HttpStatus.OK);
     }
 
     @GetMapping("/job/{idJob}/grant/{idUser}")

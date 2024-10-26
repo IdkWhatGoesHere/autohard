@@ -1,7 +1,5 @@
 package com.autohard.api.models;
 
-import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,17 +33,13 @@ public class Playbook {
     @Column(name = "type")
     private playbookType type;
 
-    @Column(name = "modules")
-    private List<String> modules;
-
     @Transient
-    private static final String PLAYBOOK_BASE_PATH = "/etc/autohard/playbooks/";
+    public static final String PLAYBOOK_BASE_PATH = "/etc/autohard/playbooks/";
 
-    public Playbook(OperatingSystem operatingSystem, String name, playbookType type, List<String> modules) {
+    public Playbook(OperatingSystem operatingSystem, String name, playbookType type) {
         this.operatingSystem = operatingSystem;
         this.name = name;
         this.type = type;
-        this.modules = modules;
     }
     
     /*
@@ -78,14 +72,6 @@ public class Playbook {
 
     public void setType(playbookType type) {
         this.type = type;
-    }
-
-    public List<String> getModules() {
-        return modules;
-    }
-
-    public void setModules(List<String> modules) {
-        this.modules = modules;
     }
 
     

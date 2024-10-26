@@ -1,5 +1,8 @@
 package com.autohard.api.models;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,6 +56,20 @@ public class Job {
     /*
      * METHODS
      */
+
+    public void buildInventory(String inventoryPath) throws IOException{
+        File inventoryFile = new File(inventoryPath);
+        FileWriter writer = new FileWriter(inventoryFile);
+
+        for (Node node : this.nodes){
+            writer.write(node.getIp() + " ansible_user=" + node.getUsername() + 
+                                        " ansible_password=" + node.getPassword() + 
+                                        " ansible_become_password=" + node.getPassword() + 
+                                        " ansible_ssh_extra_args=\'-o stricthostkeychecking=no\'" + System.getProperty("line.separator"));
+        }
+
+        writer.close();
+    }
 
     public void allowUser(User user){
         this.allowed.add(user);

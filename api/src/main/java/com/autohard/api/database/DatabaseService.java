@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.autohard.api.database.repos.AuthTokenRepository;
+import com.autohard.api.database.repos.ExecutionRepository;
 import com.autohard.api.database.repos.JobRepository;
 import com.autohard.api.database.repos.NodeRepository;
 import com.autohard.api.database.repos.OperatingSystemRepository;
 import com.autohard.api.database.repos.PlaybookRepository;
 import com.autohard.api.database.repos.RoleRepository;
 import com.autohard.api.database.repos.UserRepository;
+import com.autohard.api.models.Execution;
 import com.autohard.api.models.Job;
 import com.autohard.api.models.Node;
 import com.autohard.api.models.OperatingSystem;
@@ -31,11 +33,12 @@ public class DatabaseService {
     private OperatingSystemRepository operatingSystemRepository;
     private NodeRepository nodeRepository;
     private PlaybookRepository playbookRepository;
+    private ExecutionRepository executionRepository;
 
     @Autowired
     public DatabaseService(JobRepository jobRepository, UserRepository userRepository, RoleRepository roleRepository,
             AuthTokenRepository authTokenRepository, OperatingSystemRepository operatingSystemRepository,
-            NodeRepository nodeRepository, PlaybookRepository playbookRepository) {
+            NodeRepository nodeRepository, PlaybookRepository playbookRepository, ExecutionRepository executionRepository) {
         this.jobRepository = jobRepository;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -43,6 +46,7 @@ public class DatabaseService {
         this.operatingSystemRepository = operatingSystemRepository;
         this.nodeRepository = nodeRepository;
         this.playbookRepository = playbookRepository;
+        this.executionRepository = executionRepository;
     }
 
     /*
@@ -184,6 +188,14 @@ public class DatabaseService {
 
     public Playbook getPlaybookById(Integer id){
         return this.playbookRepository.findById(id).orElse(null);
+    }
+
+    /*
+     * EXECUTION OPERATIONS
+     */
+
+    public Execution saveExecution(Execution exec){
+        return this.executionRepository.save(exec);
     }
 }
 
