@@ -36,6 +36,10 @@ public class Playbook {
     @Transient
     public static final String PLAYBOOK_BASE_PATH = "/etc/autohard/playbooks/";
 
+    public Playbook(){
+        super();
+    }
+
     public Playbook(OperatingSystem operatingSystem, String name, playbookType type) {
         this.operatingSystem = operatingSystem;
         this.name = name;

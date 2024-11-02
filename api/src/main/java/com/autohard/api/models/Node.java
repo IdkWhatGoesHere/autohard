@@ -36,6 +36,10 @@ public class Node {
     @JoinColumn(name = "operating_system_id", referencedColumnName = "id")
     private OperatingSystem operatingSystem;
 
+    public Node(){
+        super();
+    }
+
     public Node(String hostname, String ip, String username, String password, OperatingSystem operatingSystem) {
         this.hostname = hostname;
         this.ip = ip;
@@ -45,7 +49,7 @@ public class Node {
     }
 
     public static boolean isIpValid(String ip){
-        Pattern pattern = Pattern.compile("((25[0-5]|2[0-4]\\d|[01]?\\d{1,2})(\\.|$)){4}");
+        Pattern pattern = Pattern.compile("((25[0-5]|2[0-4]\\d|1?\\d?\\d)(\\.|\\b)){4}");
         Matcher matcher = pattern.matcher(ip);
 
         return matcher.matches();

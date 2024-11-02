@@ -158,6 +158,10 @@ public class DatabaseService {
         return this.operatingSystemRepository.findById(id).orElse(null);
     }
 
+    public OperatingSystem saveOperatingSystem(OperatingSystem os){
+        return this.operatingSystemRepository.save(os);
+    }
+
     /*
      * NODE OPERATIONS
      */
@@ -190,12 +194,20 @@ public class DatabaseService {
         return this.playbookRepository.findById(id).orElse(null);
     }
 
+    public Playbook savePlaybook(Playbook pb){
+        return this.playbookRepository.save(pb);
+    }
+
     /*
      * EXECUTION OPERATIONS
      */
 
     public Execution saveExecution(Execution exec){
         return this.executionRepository.save(exec);
+    }
+
+    public List<Execution> getAllExecutions(){
+        return this.executionRepository.findAll();
     }
 }
 

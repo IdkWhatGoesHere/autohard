@@ -3,10 +3,11 @@ package com.autohard.api.models;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.autohard.api.models.session.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -34,10 +35,10 @@ public class Job {
     private Playbook playbook;
 
     @ElementCollection
-    private List<Node> nodes;
+    private List<Node> nodes = new ArrayList<>();
 
     @ElementCollection
-    private List<User> allowed;
+    private List<User> allowed = new ArrayList<>();
 
     public Job(){
         super();
@@ -46,8 +47,6 @@ public class Job {
     public Job(String name, Playbook playbook, User owner) {
         this.name = name;
         this.playbook = playbook;
-        this.nodes = Collections.emptyList();
-        this.allowed = Collections.emptyList();
         this.allowed.add(owner);
     }
 
@@ -135,16 +134,37 @@ public class Job {
         this.playbook = playbook;
     }
 
+    @JsonIgnore
     public List<Node> getNodes(){
         return this.nodes;
+    }
+
+    public List<String> getAddedNodes(){
+        List<String> addedNodes = new ArrayList<>();
+
+        for (Node node : nodes){
+            addedNodes.add(node.getIp());
+        }
+
+        return addedNodes;
     }
 
     public void setNodes(List<Node> nodes){
         this.nodes = nodes;
     }
 
-    public List<User> getAllowed() {
+    @JsonIgnore
+    public List<User> getAllowed(){
         return allowed;
     }
-    
+
+    public List<String> getAllowedUsers() {
+        List<String> allowedUsers = new ArrayList<>();
+
+        for (User user : this.allowed){
+            allowedUsers.add(user.getUsername());
+        }
+
+        return allowedUsers;
+    }
 }

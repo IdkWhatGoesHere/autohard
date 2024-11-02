@@ -24,6 +24,10 @@ public class OperatingSystem {
     @Column(name = "version")
     private String version;
 
+    public OperatingSystem(){
+        super();
+    }
+
     public OperatingSystem(String osName, String distribution, String version) {
         this.osName = osName;
         this.distribution = distribution;

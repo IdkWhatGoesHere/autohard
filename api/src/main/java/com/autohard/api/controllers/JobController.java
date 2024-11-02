@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.autohard.api.database.DatabaseService;
 import com.autohard.api.models.Execution;
 import com.autohard.api.models.Job;
+import com.autohard.api.models.Node;
 import com.autohard.api.models.Playbook;
 import com.autohard.api.models.Execution.execState;
 import com.autohard.api.models.session.AuthToken;
@@ -90,7 +91,7 @@ public class JobController {
 
         Job createdJob = new Job(job.getName(), rescuedPb, currentUser);
 
-        return new ResponseEntity<>(createdJob, HttpStatus.OK);
+        return new ResponseEntity<>(databaseService.saveJob(createdJob), HttpStatus.OK);
     }
 
     @PutMapping("/job")
@@ -163,7 +164,7 @@ public class JobController {
         }
 
         try{
-            Runtime.getRuntime().exec("/bin/sh ansible-playbook " + playbookPath + " -i " + inventoryPath + " >> " + outputPath);
+            Runtime.getRuntime().exec("ansible-playbook " + playbookPath + " -i " + inventoryPath + " >> " + outputPath);
         } catch (IOException e){
             logger.error("An error ocurred when executing the ansible playbook in the system\'s shell");
             logger.error(e.getMessage());
@@ -171,7 +172,7 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }        
 
-        Execution exec = new Execution(new Date(System.currentTimeMillis()), rescuedJob, execState.RUNNING, outputPath);
+        Execution exec = new Execution(new Date(System.currentTimeMillis()), rescuedJob, execState.RUNNING, outputPath, inventoryPath);
 
         return new ResponseEntity<>(databaseService.saveExecution(exec), HttpStatus.OK);
     }
@@ -225,6 +226,26 @@ public class JobController {
 
         rescuedJob.revokeUser(rescuedUser);
         
+        return new ResponseEntity<>(databaseService.saveJob(rescuedJob), HttpStatus.OK);
+    }
+
+    @GetMapping("/job/{idJob}/node/{idNode}")
+    public ResponseEntity<Job> addNodeToJob(@RequestHeader("Authorization") String authHeader, @PathVariable Integer idJob, @PathVariable Integer idNode){
+        User currentUser = AuthToken.isValid(databaseService, authHeader);
+
+        if (currentUser == null || !currentUser.hasPrivilege(autoHardPrivilege.WRITE_JOB)){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        Node rescuedNode = databaseService.getNodeById(idNode);
+        Job rescuedJob = databaseService.getJobById(idJob);
+
+        if (rescuedJob == null || rescuedNode == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        rescuedJob.addNode(rescuedNode);
+
         return new ResponseEntity<>(databaseService.saveJob(rescuedJob), HttpStatus.OK);
     }
 

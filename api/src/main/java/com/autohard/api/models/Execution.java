@@ -1,6 +1,11 @@
 package com.autohard.api.models;
 
+import java.io.File;
 import java.util.Date;
+import java.util.List;
+
+import org.unix4j.Unix4j;
+import org.unix4j.line.Line;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -41,15 +46,31 @@ public class Execution {
     @Column(name = "output_file_path")
     private String outputFilePath;
 
+    @Column(name = "inventory_file_path")
+    private String inventoryFilePath;
+
     @OneToOne
     @JoinColumn(name = "job_id", referencedColumnName = "id")
     private Job job;
 
-    public Execution(Date executionDate, Job job, execState state, String outputfile) {
+    public Execution(){
+        super();
+    }
+
+    public Execution(Date executionDate, Job job, execState state, String outputfile, String inventoryPath) {
         this.executionDate = executionDate;
         this.job = job;
         this.state = state;
         this.outputFilePath = outputfile;
+        this.inventoryFilePath = inventoryPath;
+    }
+
+    public boolean outputIsFinished(){
+        File file = new File(this.outputFilePath);
+
+        List<Line> lines = Unix4j.grep("PLAY RECAP", file).toLineList();
+
+        return !lines.isEmpty();
     }
 
     /*
@@ -95,5 +116,10 @@ public class Execution {
     @JsonIgnore
     public String getOutputFilePath(){
         return this.outputFilePath;
+    }
+
+    @JsonIgnore
+    public String getInventoryFilePath(){
+        return this.inventoryFilePath;
     }
 }

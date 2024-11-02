@@ -2,6 +2,8 @@ package com.autohard.api.controllers;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,8 @@ import jakarta.transaction.Transactional;
 public class NodeController {
     
     private final DatabaseService databaseService;
+
+    private static final Logger logger = LoggerFactory.getLogger(NodeController.class);
 
     @Autowired
     public NodeController(DatabaseService databaseService){
@@ -72,6 +76,7 @@ public class NodeController {
 
         if (node.getUsername() == null || node.getPassword() == null || node.getOperatingSystem() == null 
             || node.getOperatingSystem().getId() == null || node.getHostname() == null || node.getIp() == null){
+            logger.error("Invalid Node object sent in the request. This may be caused by a necessary attribute that was not sent or by an invalid IP format.");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
