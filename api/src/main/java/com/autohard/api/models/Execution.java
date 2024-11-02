@@ -1,6 +1,7 @@
 package com.autohard.api.models;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +27,8 @@ public class Execution {
 
     public enum execState{
         RUNNING,
-        FINISHED
+        FINISHED,
+        ERROR
     }
     
     @Id
@@ -65,7 +67,7 @@ public class Execution {
         this.inventoryFilePath = inventoryPath;
     }
 
-    public boolean outputIsFinished(){
+    public boolean outputIsFinished() throws FileNotFoundException{
         File file = new File(this.outputFilePath);
 
         List<Line> lines = Unix4j.grep("PLAY RECAP", file).toLineList();

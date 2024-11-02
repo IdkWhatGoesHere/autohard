@@ -82,7 +82,7 @@ public class NodeController {
 
         OperatingSystem rescuedOs = databaseService.getOperatingSystemById(node.getOperatingSystem().getId());
 
-        if (rescuedOs == null || Node.isIpValid(node.getIp())){
+        if (rescuedOs == null || !Node.isIpValid(node.getIp())){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 

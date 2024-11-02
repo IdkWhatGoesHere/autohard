@@ -3,6 +3,8 @@ package com.autohard.api.models;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -91,6 +93,7 @@ public class Node {
         this.username = username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }

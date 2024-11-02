@@ -1,5 +1,6 @@
 package com.autohard.api.configuration;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -45,21 +46,32 @@ public class ScheduledRunner {
     public void updateExecutionState(){
         List<Execution> execs = databaseService.getAllExecutions();
 
+        boolean finished = false;
+
         for(Execution exec : execs){
-            if (exec.outputIsFinished()){
+            try{
+                finished = exec.outputIsFinished();
+            }catch (FileNotFoundException e){
+                logger.error("Error when retrieving the output file for execution {}. The file was not found.", exec.getId());
+                exec.setState(execState.ERROR);
+
+                databaseService.saveExecution(exec);
+            }
+
+            if (finished){
                 exec.setState(execState.FINISHED);
 
                 try{
                     Files.deleteIfExists(Paths.get(exec.getInventoryFilePath()));
                 }catch (IOException e){
-                    logger.error("Error when deleting the inventory file for execution %", exec.getId());
+                    logger.error("Error when deleting the inventory file for execution {}", exec.getId());
                     logger.error(e.getMessage());
                 }
 
                 try{
                     exec.setOutput(Files.readString(Paths.get(exec.getOutputFilePath()), StandardCharsets.UTF_8));
                 }catch (IOException e){
-                    logger.error("Error when reading the output file for execution %", exec.getId());
+                    logger.error("Error when reading the output file for execution {}", exec.getId());
                     logger.error(e.getMessage());
                 }
 
