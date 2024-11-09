@@ -2,6 +2,7 @@ package com.autohard.api.controllers;
 
 import java.util.Date;
 import java.util.List;
+import java.io.File;
 import java.io.IOException;
 
 import org.slf4j.Logger;
@@ -164,7 +165,11 @@ public class JobController {
         }
 
         try{
-            Runtime.getRuntime().exec("ansible-playbook " + playbookPath + " -i " + inventoryPath + " >> " + outputPath);
+            ProcessBuilder builder = new ProcessBuilder("ansible-playbook", playbookPath, "-i ", inventoryPath);
+            builder.redirectOutput(new File(outputPath));
+            builder.redirectError(new File(outputPath));
+
+            builder.start();
         } catch (IOException e){
             logger.error("An error ocurred when executing the ansible playbook in the system\'s shell");
             logger.error(e.getMessage());
