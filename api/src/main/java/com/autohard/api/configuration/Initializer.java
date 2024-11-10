@@ -1,7 +1,13 @@
 package com.autohard.api.configuration;
 
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -21,6 +27,8 @@ public class Initializer implements ApplicationRunner{
 
     private DatabaseService databaseService;
     private PasswordEncoder passwordEncoder;
+
+    private static final Logger logger = LoggerFactory.getLogger(Initializer.class);
 
     private static final String ADMIN_USER = "admin";
 
@@ -59,7 +67,17 @@ public class Initializer implements ApplicationRunner{
          * CREATE PLAYBOOKS (temporary)
          */
 
-        databaseService.savePlaybook(new Playbook(rescuedOs, "testPlaybook", playbookType.AUDITING));
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("/etc/autohard/playbooks"))) {
+            for (Path file : stream) {
+                if (Files.isRegularFile(file)) { 
+                    String fileName = file.getFileName().toString();
+                    databaseService.savePlaybook(new Playbook(rescuedOs, fileName.substring(0, fileName.length() - 4), playbookType.HARDENING));
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error while importing playbooks to the database");
+            logger.error(e.getMessage());
+        }
     }
     
     
