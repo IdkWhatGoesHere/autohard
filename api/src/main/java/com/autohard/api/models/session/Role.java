@@ -25,7 +25,8 @@ public class Role {
         READ_OPERATING_SYSTEM,
         READ_PLAYBOOK,
         WRITE_NODE,
-        READ_NODE
+        READ_NODE,
+        READ_EXECUTION
     }
     
     @Id

@@ -209,5 +209,13 @@ public class DatabaseService {
     public List<Execution> getAllExecutions(){
         return this.executionRepository.findAll();
     }
+
+    public Execution getExecutionById(Integer id){
+        return this.executionRepository.findById(id).orElse(null);
+    }
+
+    public List<Execution> getAllExecutionsByJob(Job job){
+        return this.executionRepository.findByJob(job);
+    }
 }
 
