@@ -46,6 +46,10 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        if (request.getPassword() == null || request.getUsername() == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         if (!passwordEncoder.matches(request.getPassword(), rescuedUser.getPassword())){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
