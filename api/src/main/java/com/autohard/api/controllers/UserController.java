@@ -111,6 +111,10 @@ public class UserController {
 
         Role rescuedRole = databaseService.getRoleById(user.getRole().getId());
 
+        if (rescuedRole == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         return new ResponseEntity<>(databaseService.saveUser(new User(user.getUsername(), passwordEncoder.encode(user.getPassword()), rescuedRole)), HttpStatus.OK);
     }
 
