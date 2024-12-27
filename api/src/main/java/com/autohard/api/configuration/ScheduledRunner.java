@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import com.autohard.api.database.DatabaseService;
 import com.autohard.api.models.Execution;
 import com.autohard.api.models.Execution.execState;
+import com.autohard.api.models.session.AuthToken;
 import com.autohard.api.models.session.User;
 
 @Component
@@ -38,6 +39,17 @@ public class ScheduledRunner {
             if (user.isCredentialExpired()){
                 user.setLocked(true);
                 databaseService.saveUser(user);
+            }
+        }
+    }
+
+    @Scheduled(fixedRate = 60000)
+    public void cleanUpExpiredTokens(){
+        List<AuthToken> tokens = databaseService.getAllAuthTokens();
+
+        for (AuthToken token : tokens){
+            if (token.isExpired()){
+                databaseService.deleteAuthTokenByValue(token.getTokenValue());
             }
         }
     }

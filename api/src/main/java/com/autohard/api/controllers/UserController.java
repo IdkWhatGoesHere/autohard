@@ -40,14 +40,15 @@ public class UserController {
 
     @PostMapping("/user/login")
     public ResponseEntity<AuthToken> login(@RequestBody LoginRequest request){
-        User rescuedUser = databaseService.getUserByName(request.getUsername());
-
-        if (rescuedUser == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
 
         if (request.getPassword() == null || request.getUsername() == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        
+        User rescuedUser = databaseService.getUserByName(request.getUsername());
+
+        if (rescuedUser == null){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
         if (!passwordEncoder.matches(request.getPassword(), rescuedUser.getPassword())){

@@ -146,6 +146,10 @@ public class DatabaseService {
         authTokenRepository.deleteByTokenValue(tokenValue);
     }
 
+    public List<AuthToken> getAllAuthTokens(){
+        return authTokenRepository.findAll();
+    }
+
     /*
      * OPERATING_SYSTEM OPERATIONS
      */
