@@ -27,9 +27,9 @@ public class AuthToken {
     @Column(name = "token_value")
     private String tokenValue;
 
-    @Column(name = "date_created")
+    @Column(name = "last_user")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date dateCreated;
+    private Date lastUsed;
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -42,7 +42,7 @@ public class AuthToken {
     public AuthToken(String token, User user){
         this.tokenValue = token;
         this.user = user;
-        this.dateCreated = new Date(System.currentTimeMillis());
+        this.lastUsed = new Date(System.currentTimeMillis());
     }
 
     public static User isValid(DatabaseService databaseService, String rawToken){
@@ -57,6 +57,9 @@ public class AuthToken {
             return null;
         }
 
+        rescuedToken.setLastUsed(new Date(System.currentTimeMillis()));
+        databaseService.saveAuthToken(rescuedToken);
+
         return rescuedToken.getUser();
     }
 
@@ -68,15 +71,19 @@ public class AuthToken {
             return null;
         }
 
+        rescuedToken.setLastUsed(new Date(System.currentTimeMillis()));
+        databaseService.saveAuthToken(rescuedToken);
+
         return rescuedToken.getUser();
     }
 
     public boolean isExpired(){
         Date current = new Date(System.currentTimeMillis());
-        Long difference =  current.getTime() - this.dateCreated.getTime();
+        Long difference =  current.getTime() - this.lastUsed.getTime();
 
-        return  ((difference / 3600000) > 1);
+        return  ((difference / 60000) > 30);
     }
+
     @JsonIgnore
     public Integer getId() {
         return id;
@@ -100,11 +107,11 @@ public class AuthToken {
     }
 
     @JsonIgnore
-    public Date getDateCreated(){
-        return this.dateCreated;
+    public Date getLastUsed(){
+        return this.lastUsed;
     }
 
-    public void setDateCreated(Date date){
-        this.dateCreated = date;
+    public void setLastUsed(Date date){
+        this.lastUsed = date;
     }
 }
