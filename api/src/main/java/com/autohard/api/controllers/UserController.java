@@ -154,7 +154,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        if (databaseService.getUserByName(user.getUsername()) != null){
+        if (databaseService.getUserByName(user.getUsername()) != null && !databaseService.getUserByName(user.getUsername()).getId().equals(user.getId())){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
