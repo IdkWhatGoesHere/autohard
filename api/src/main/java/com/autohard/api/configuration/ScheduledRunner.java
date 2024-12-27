@@ -82,6 +82,8 @@ public class ScheduledRunner {
 
                 try{
                     exec.setOutput(Files.readString(Paths.get(exec.getOutputFilePath()), StandardCharsets.UTF_8));
+
+                    Files.deleteIfExists(Paths.get(exec.getOutputFilePath()));
                 }catch (IOException e){
                     logger.error("Error when reading the output file for execution {}", exec.getId());
                     logger.error(e.getMessage());
