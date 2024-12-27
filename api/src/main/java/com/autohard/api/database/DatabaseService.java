@@ -1,5 +1,6 @@
 package com.autohard.api.database;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ import com.autohard.api.models.Job;
 import com.autohard.api.models.Node;
 import com.autohard.api.models.OperatingSystem;
 import com.autohard.api.models.Playbook;
+import com.autohard.api.models.Execution.execState;
 import com.autohard.api.models.session.AuthToken;
 import com.autohard.api.models.session.Role;
 import com.autohard.api.models.session.User;
@@ -210,8 +212,17 @@ public class DatabaseService {
         return this.executionRepository.save(exec);
     }
 
-    public List<Execution> getAllExecutions(){
-        return this.executionRepository.findAll();
+    public List<Execution> getAllRunningExecutions(){
+        List<Execution> total = this.executionRepository.findAll();
+        List<Execution> result = new ArrayList<>();
+
+        for (Execution execution : total){
+            if (execution.getState().equals(execState.RUNNING)){
+                result.add(execution);
+            }
+        }
+
+        return result;
     }
 
     public Execution getExecutionById(Integer id){

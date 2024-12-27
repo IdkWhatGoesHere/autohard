@@ -56,7 +56,7 @@ public class ScheduledRunner {
 
     @Scheduled(fixedRate = 10000)
     public void updateExecutionState(){
-        List<Execution> execs = databaseService.getAllExecutions();
+        List<Execution> execs = databaseService.getAllRunningExecutions();
 
         boolean finished = false;
 
