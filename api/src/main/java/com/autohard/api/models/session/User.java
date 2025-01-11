@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.autohard.api.models.session.Role.autoHardPrivilege;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -102,6 +103,7 @@ public class User{
         this.role = role;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }

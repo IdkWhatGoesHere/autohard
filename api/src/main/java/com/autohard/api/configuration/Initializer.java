@@ -49,7 +49,9 @@ public class Initializer implements ApplicationRunner{
          */
 
         Role adminRole = databaseService.saveRole(new Role(ADMIN_USER, List.of(autoHardPrivilege.values())));
+        Role readerRole = databaseService.saveRole(new Role("reader", List.of(autoHardPrivilege.READ_USER, autoHardPrivilege.READ_JOB)));
         databaseService.saveUser(new User(ADMIN_USER, passwordEncoder.encode(ADMIN_USER), adminRole));
+        databaseService.saveUser(new User("reader", passwordEncoder.encode("reader"), readerRole));
 
         /*
          * CREATE OPERATING SYSTEMS (temporary)
